@@ -2,17 +2,18 @@ import React from "react";
 import closeLogo from "../img/close.svg";
 import openLogo from "../img/open.svg";
 import moment from "moment";
+import { Link } from "react-router-dom";
 
 export default function IssueRow(props) {
   let user = props.issue.repository_url.split("repos/")[1].split("/")[0];
   let repos = props.issue.repository_url.split("repos/")[1].split("/")[1];
-
   return (
     <div className="row p-3 w-100 m-0 my-2 border-bottom">
       <div className="col-10">
-        <a
+        <Link
           href="#!"
-          onClick={() => props.toggle(user, repos, props.issue.number)}
+          onClick={() => props.toggle2(user, repos, props.issue.number)}
+          to={`/${props.issue.title}`}
         >
           <h5 className="text-dark">
             {props.issue.title}
@@ -21,35 +22,35 @@ export default function IssueRow(props) {
               alt="..."
               src={props.issue.state === "closed" ? closeLogo : openLogo}
             />
-          </h5>
-          {props.issue.labels &&
-            props.issue.labels.map(item => {
-              return (
-                <button
-                  className="labels-btn mx-1"
-                  style={{
-                    borderRadius: "5px",
-                    padding: "5px 5px 5px 5px",
-                    backgroundColor: `#${item.color}`,
-                    fontSize: "10px",
-                    fontWeight: "normal"
-                  }}
-                >
-                  {item.name}
-                </button>
-              );
-            })}
-        </a>
-        <h6 className="text-primary my-3">
-          For Repo: {props.issue.url.split(".com/repos/")[1]}
-        </h6>
-        <h6 className="text-muted">
-          #{props.issue.number} opened{" "}
-          {moment(props.issue.updated_at).fromNow()}
-          {" by" + props.issue.user.login}
-        </h6>
-      </div>
+          </h5></Link>
+        {props.issue.labels &&
+          props.issue.labels.map(item => {
+            return (
+              <button
+                className="labels-btn mx-1"
+                style={{
+                  borderRadius: "5px",
+                  padding: "5px 5px 5px 5px",
+                  backgroundColor: `#${item.color}`,
+                  fontSize: "10px",
+                  fontWeight: "normal"
+                }}
+              >
+                {item.name}
+              </button>
+            );
+          })}
+      
+      <h6 className="text-primary my-3">
+        For Repo: {props.issue.url.split(".com/repos/")[1]}
+      </h6>
+      <h6 className="text-muted">
+        #{props.issue.number} opened{" "}
+        {moment(props.issue.updated_at).fromNow()}
+        {" by" + props.issue.user.login}
+      </h6>
     </div>
+    </div >
   );
 }
 
@@ -65,7 +66,7 @@ node_id: "MDU6SXNzdWU1ODk2MjA3Nzk="
 number: 52424
 title: "apps.facebook.com"
 user: {login: "adguard-bot", id: 30082422, node_id: "MDQ6VXNlcjMwMDgyNDIy", avatar_url: "https://avatars1.githubusercontent.com/u/30082422?v=4", gravatar_id: "", …}
-labels: (3) [{…}, {…}, {…}] 
+labels: (3) [{…}, {…}, {…}]
 --> inside a label object {
   id: 1652348314
   node_id: "MDU6TGFiZWwxNjUyMzQ4MzE0"

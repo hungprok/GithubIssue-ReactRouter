@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Open from "../assets/icon/open.svg";
 import Close from "../assets/icon/close.svg";
-import ReactModal from "react-modal";
 import { Image, Form, Button, Tab, Tabs } from "react-bootstrap";
 import Moment from "react-moment";
 import Comment from "./Comment.js";
@@ -10,6 +9,7 @@ import Comment from "./Comment.js";
 const ReactMarkdown = require("react-markdown");
 
 export default function ShowIssue(props) {
+  console.log(props);
   const emoji = {
     ["+1"]:
       "https://github.githubassets.com/images/icons/emoji/unicode/1f44d.png",
@@ -28,25 +28,31 @@ export default function ShowIssue(props) {
     eyes: "https://github.githubassets.com/images/icons/emoji/unicode/1f440.png"
   };
   const [key, setKey] = useState("comment");
+  let htmlforEmoji;
   let infoIssue = props.issueSelected;
-  let emojiThread = props.reactionsThread.map(item => item.content);
-  let totalEmojiThread = emojiThread.reduce((total, content) => {
-    if (content in total) {
-      total[content]++;
-    } else {
-      total[content] = 1;
-    }
-    return total;
-  }, {});
-  let emojiArray = Object.keys(totalEmojiThread);
-  let htmlforEmoji = emojiArray.map(item => {
-    return (
-      <span className="emoji-showing">
-        {item && <Image className="icon-reactions" src={emoji[item]} />}{" "}
-        {item && totalEmojiThread[item]}
-      </span>
-    );
-  });
+  console.log(infoIssue)
+
+  if (props.reactionsThread) {
+    let emojiThread = props.reactionsThread.map(item => item.content);
+    let totalEmojiThread = emojiThread.reduce((total, content) => {
+      if (content in total) {
+        total[content]++;
+      } else {
+        total[content] = 1;
+      }
+      return total;
+    }, {});
+    let emojiArray = Object.keys(totalEmojiThread);
+    htmlforEmoji = emojiArray.map(item => {
+      return (
+        <span className="emoji-showing">
+          {item && <Image className="icon-reactions" src={emoji[item]} />}{" "}
+          {item && totalEmojiThread[item]}
+        </span>
+      );
+    });
+  }
+
 
   const addReactThread = async (idAdd, id) => {
     try {
@@ -69,7 +75,7 @@ export default function ShowIssue(props) {
       });
       if (response.ok) {
         alert("Your reaction had been added successfully!");
-        props.toggleIssue(user, repos, id); //id id issue
+        props.toggleIssue2(user, repos, id); //id id issue
       }
     } catch (e) {
       console.log(e);
@@ -102,7 +108,7 @@ export default function ShowIssue(props) {
       });
       if (response.ok) {
         alert("Your issue's status had been changed successfully!");
-        props.toggleIssue(user, repos, id); //hmm id huh
+        props.toggleIssue2(user, repos, id); //hmm id huh
       } else if (response.status === 403) {
         alert("You dont have any authorize to change status this issue!");
       }
@@ -137,7 +143,7 @@ export default function ShowIssue(props) {
         });
         if (response.ok) {
           alert("Your issue had been changed successfully!");
-          props.toggleIssue(user, repos, id); //id issue
+          props.toggleIssue2(user, repos, id); //id issue
         } else if (response.status === 403) {
           alert("You dont have any authorize to change content this issue!");
         }
@@ -150,7 +156,7 @@ export default function ShowIssue(props) {
     return <span></span>;
   } else {
     return (
-      <ReactModal
+      <div
         ariaHideApp={false}
         isOpen={props.toggleModal}
         onRequestClose={() => props.setShowModal(false)}
@@ -211,20 +217,20 @@ export default function ShowIssue(props) {
               <Image src={Open} /> Open
             </span>
           ) : (
-            <span
-              className="bg-danger"
-              title="Toggle to Open"
-              style={{
-                cursor: "pointer",
-                borderRadius: "5px",
-                padding: "5px 5px 5px 5px",
-                color: "white"
-              }}
-              onClick={() => statusIssue(infoIssue.number, infoIssue.state)}
-            >
-              <Image src={Close} /> Closed
-            </span>
-          )}
+              <span
+                className="bg-danger"
+                title="Toggle to Open"
+                style={{
+                  cursor: "pointer",
+                  borderRadius: "5px",
+                  padding: "5px 5px 5px 5px",
+                  color: "white"
+                }}
+                onClick={() => statusIssue(infoIssue.number, infoIssue.state)}
+              >
+                <Image src={Close} /> Closed
+              </span>
+            )}
           <span className="title-userissue">{infoIssue.user.login}</span>
           <span>
             {" "}
@@ -414,7 +420,7 @@ export default function ShowIssue(props) {
                   repos={props.repos}
                   token={props.token}
                   deleteComment={props.deleteComment}
-                  toggleIssue={props.toggleIssue}
+                  toggleIssue2={props.toggleIssue}
                   issueSelected={props.issueSelected}
                 />
               );
@@ -460,7 +466,7 @@ export default function ShowIssue(props) {
             </Form.Group>
           </Form>
         </div>
-      </ReactModal>
+      </div>
     );
   }
 }
